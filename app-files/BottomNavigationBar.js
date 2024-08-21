@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useSelector } from "react-redux";
 import FavoriteScreen from "./FavoriteScreen";
-import HomeScreen from "@/app-files/HomeScreen";
+import HomeScreen from "./homeScreen/HomeScreen";
 import DetailsScreen from "./detailsScreen/DetailsScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
