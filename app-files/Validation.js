@@ -7,10 +7,12 @@ import {
   Pressable,
 } from "react-native";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
-const Validation = ({ setIsLoggedIn }) => {
+const Validation = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
 
   function validationHandler() {
     const regex = new RegExp("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$");
@@ -20,7 +22,7 @@ const Validation = ({ setIsLoggedIn }) => {
       Alert.alert("Please enter a valid password");
       return false;
     } else {
-      setIsLoggedIn(true);
+      dispatch({ type: "LOGIN", payload: { email, password } });
     }
   }
 
@@ -32,6 +34,7 @@ const Validation = ({ setIsLoggedIn }) => {
           placeholder="Email"
           placeholderTextColor="grey"
           onChangeText={setEmail}
+          value={email}
         />
       </View>
       <View style={styles.inputContainer}>
@@ -41,6 +44,7 @@ const Validation = ({ setIsLoggedIn }) => {
           placeholderTextColor="grey"
           secureTextEntry={true}
           onChangeText={setPassword}
+          value={password}
         />
       </View>
       <Pressable style={styles.button} onPress={validationHandler}>

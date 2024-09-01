@@ -13,7 +13,9 @@ const GifItem = ({ item, isFavorite, toggleFavorite, pressHandler }) => (
       </View>
     </View>
 
-    <Text style={styles.title}>{item.title}</Text>
+    <Text style={styles.title} numberOfLines={1}>
+      {item.title}
+    </Text>
     <Text numberOfLines={2} style={styles.description}>
       {item.description
         ? item.description
@@ -28,8 +30,14 @@ const styles = StyleSheet.create({
   itemContainer: {
     backgroundColor: "white",
     marginBottom: 16,
-    height: 400,
-    width: "50%",
+    flex: 1,
+    marginHorizontal: 5,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   viewImage: {
     paddingLeft: 4,
@@ -51,26 +59,25 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     paddingRight: 5,
     resizeMode: "cover",
+    marginTop: 10,
   },
   image: {
-    width: 200,
-    height: 250,
+    width: "100%",
+    height: 150,
     resizeMode: "cover",
-    marginTop: 10,
     borderRadius: 4,
   },
   title: {
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: "bold",
-    marginTop: 15,
+    marginTop: 5,
     color: "#333",
-    marginHorizontal: 6,
+    paddingHorizontal: 5,
   },
-
   description: {
     fontSize: 12,
     color: "#666",
-    marginTop: 15,
-    marginLeft: 10,
+    paddingHorizontal: 5,
+    marginBottom: 10,
   },
 });

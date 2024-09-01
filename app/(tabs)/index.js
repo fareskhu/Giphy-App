@@ -1,48 +1,30 @@
 import { View, StyleSheet } from "react-native";
+import { Provider, useSelector, useDispatch } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 import Validation from "../../app-files/Validation";
-import { useState } from "react";
 import BottomNavigationBar from "../../app-files/BottomNavigationBar";
+import { store, persistor } from "../../app-files/store";
 
-import { createStore, combineReducers } from "redux";
-import { Provider } from "react-redux";
+const AppContent = () => {
+  const isLoggedIn = useSelector((state) => state.favorites.isLoggedIn);
 
-const store = createStore(combineReducers({ favorites }));
-
-function favorites(state = { favoriteGifs: [] }, action) {
-  switch (action.type) {
-    case "ADD_TO_FAVORITE":
-      return {
-        ...state,
-        favoriteGifs: [...state.favoriteGifs, action.payload],
-      };
-    case "REMOVE_FROM_FAVORITE":
-      return {
-        ...state,
-        favoriteGifs: state.favoriteGifs.filter(
-          (item) => item.id !== action.payload
-        ),
-      };
-    case "REMOVE_ALL_FROM_FAVORITE":
-      return {
-        ...state,
-        favoriteGifs: [],
-      };
-    default:
-      return state;
+  if (isLoggedIn) {
+    return <BottomNavigationBar />;
+  } else {
+    return (
+      <View style={styles.root}>
+        <Validation />
+      </View>
+    );
   }
-}
+};
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
     <Provider store={store}>
-      {isLoggedIn ? (
-        <BottomNavigationBar />
-      ) : (
-        <View style={styles.root}>
-          <Validation setIsLoggedIn={setIsLoggedIn} />
-        </View>
-      )}
+      <PersistGate loading={null} persistor={persistor}>
+        <AppContent />
+      </PersistGate>
     </Provider>
   );
 }
@@ -52,6 +34,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#AFEEEE",
+    backgroundColor: "AFEEEE",
   },
 });
