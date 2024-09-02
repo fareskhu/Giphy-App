@@ -31,10 +31,10 @@ export const fetchGifs = async (
         slug: item.slug,
         type: item.type,
       }));
-      setGifs((prevGifs) => [...prevGifs, ...searchedGifs]); // Append new data to existing
+      setGifs((currentGifs) => [...currentGifs, ...searchedGifs]);
       setNoResults(false);
       if (data.length < 20) {
-        setHasMore(false); // No more data to fetch
+        setHasMore(false);
       }
     }
   } catch (error) {

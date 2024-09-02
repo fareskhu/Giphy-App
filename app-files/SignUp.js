@@ -1,30 +1,19 @@
-import {
-  StyleSheet,
-  TextInput,
-  View,
-  Alert,
-  Text,
-  Pressable,
-} from "react-native";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 
-const Validation = () => {
+const SignUp = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const dispatch = useDispatch();
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  function validationHandler() {
-    const regex = new RegExp("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$");
-    if (!regex.test(email)) {
-      Alert.alert("Please enter a valid email");
-    } else if (password.length < 8) {
-      Alert.alert("Please enter a valid password");
-      return false;
-    } else {
-      dispatch({ type: "LOGIN", payload: { email, password } });
+  const handleSignUp = () => {
+    // Add your sign-up logic here
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
     }
-  }
+    // Handle sign-up process
+  };
 
   return (
     <View style={styles.container}>
@@ -47,15 +36,24 @@ const Validation = () => {
           value={password}
         />
       </View>
-      <Pressable style={styles.button} onPress={validationHandler}>
-        <Text style={styles.buttonText}>Login</Text>
-      </Pressable>
-      <Pressable>
-        <Text style={styles.signUpText}>Sign Up</Text>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm Password"
+          placeholderTextColor="grey"
+          secureTextEntry={true}
+          onChangeText={setConfirmPassword}
+          value={confirmPassword}
+        />
+      </View>
+      <Pressable style={styles.button} onPress={handleSignUp}>
+        <Text style={styles.buttonText}>Sign Up</Text>
       </Pressable>
     </View>
   );
 };
+
+export default SignUp;
 
 const styles = StyleSheet.create({
   container: {
@@ -77,20 +75,14 @@ const styles = StyleSheet.create({
     width: 250,
   },
   button: {
-    backgroundColor: "red",
+    backgroundColor: "blue",
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 10,
     borderRadius: 4,
-    flexDirection: "row",
   },
   buttonText: {
     color: "white",
     fontSize: 16,
   },
-  signUpText: {
-    marginTop: 10,
-  },
 });
-
-export default Validation;

@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import { Provider, useSelector, useDispatch } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import Validation from "../../app-files/Validation";
 import BottomNavigationBar from "../../app-files/BottomNavigationBar";
@@ -34,6 +34,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "AFEEEE",
+    backgroundColor: "#AFEEEE",
   },
 });

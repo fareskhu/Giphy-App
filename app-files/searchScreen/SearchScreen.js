@@ -27,16 +27,9 @@ const SearchScreen = () => {
     if (searchText !== "") {
       setPage(0); // Reset page number to 0 for a new search
       setGifs([]); // Clear the existing GIFs
-      setHasMore(true); // Reset the flag to allow more data loading
-      setLoading(true); // Start the loading process
-      fetchGifs(
-        searchText,
-        setGifs,
-        setNoResults,
-        0, // Start from the first page
-        setLoading,
-        setHasMore
-      );
+      setHasMore(true);
+      setLoading(true);
+      fetchGifs(searchText, setGifs, setNoResults, 0, setLoading, setHasMore);
     }
   };
 
@@ -72,13 +65,13 @@ const SearchScreen = () => {
   const handleOnEndReached = () => {
     if (!loading && hasMore) {
       const nextPage = page + 1;
-      setPage(nextPage); // Increment the page number
+      setPage(nextPage);
       setLoading(true);
       fetchGifs(
         searchText,
         setGifs,
         setNoResults,
-        nextPage, // Use the next page number
+        nextPage,
         setLoading,
         setHasMore
       );

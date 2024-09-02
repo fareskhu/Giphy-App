@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const initialFavoritesState = { favoriteGifs: [], isLoggedIn: false };
 
-function favoritesReducer(state = initialFavoritesState, action) {
+function reducer(state = initialFavoritesState, action) {
   switch (action.type) {
     case "ADD_TO_FAVORITE":
       return {
@@ -28,7 +28,11 @@ function favoritesReducer(state = initialFavoritesState, action) {
         ...state,
         isLoggedIn: true,
       };
-
+    case "LOGOUT":
+      return {
+        ...state,
+        isLoggedIn: false,
+      };
     default:
       return state;
   }
@@ -40,7 +44,7 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
-  favorites: persistReducer(persistConfig, favoritesReducer),
+  favorites: persistReducer(persistConfig, reducer),
 });
 
 export const store = createStore(rootReducer);

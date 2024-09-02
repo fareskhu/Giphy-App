@@ -46,7 +46,7 @@ function FavoriteScreen() {
             data={favorites}
             keyExtractor={(item) => item.id}
             numColumns={numColumns}
-            columnWrapperStyle={styles.columnWrapper} // This ensures even spacing between items
+            columnWrapperStyle={styles.columnWrapper}
             renderItem={({ item }) => (
               <Pressable
                 style={styles.itemContainer}

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, FlatList } from "react-native";
+import { View, StyleSheet, FlatList, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import DetailsHeader from "./DetailsHeader";
 import DetailsImage from "./DetailsImage";
@@ -24,7 +24,7 @@ const DetailsScreen = ({ route }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <DetailsHeader title={title} />
       <DetailsImage
         image={image}
@@ -33,7 +33,7 @@ const DetailsScreen = ({ route }) => {
         toggleFavorite={toggleFavorite}
       />
       <DetailsInfo description={description} slug={slug} type={type} />
-    </View>
+    </ScrollView>
   );
 };
 

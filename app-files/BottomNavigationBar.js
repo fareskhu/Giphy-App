@@ -7,6 +7,7 @@ import DetailsScreen from "./detailsScreen/DetailsScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
+import LogoutButton from "./LogoutButton";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -49,7 +50,11 @@ const BottomTabs = () => {
       <Tab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ title: "Home Screen", tabBarLabel: "Home" }}
+        options={{
+          title: "Home Screen",
+          tabBarLabel: "Home",
+          headerRight: () => <LogoutButton />,
+        }}
       />
       <Tab.Screen
         name="Favorite"
