@@ -1,25 +1,62 @@
-import { View, StyleSheet } from "react-native";
-import { Provider, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { Provider, useSelector, useDispatch } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
-import Validation from "../../app-files/Validation";
+import Authentication from "../../app-files/Authentication";
 import BottomNavigationBar from "../../app-files/BottomNavigationBar";
 import { store, persistor } from "../../app-files/store";
+import { firebase } from "../../app-files/firebaseConfig";
+import { I18nManager, StyleSheet, View } from "react-native"; // Import I18nManager for layout direction
+import i18n from "@/app-files/i18";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+I18nManager.allowRTL(true);
+I18nManager.forceRTL(false);
 
 const AppContent = () => {
   const isLoggedIn = useSelector((state) => state.favorites.isLoggedIn);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Handle the authentication state
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        dispatch({ type: "LOGIN" });
+      }
+    });
+
+    return unsubscribe;
+  }, [dispatch]);
 
   if (isLoggedIn) {
     return <BottomNavigationBar />;
   } else {
-    return (
-      <View style={styles.root}>
-        <Validation />
-      </View>
-    );
+    return <Authentication />;
   }
 };
 
 export default function App() {
+  const [language, setLanguage] = useState();
+  const getLanguage = async () => {
+    let language = await AsyncStorage.getItem("lang");
+    setLanguage(language);
+  };
+
+  useEffect(() => {
+    // I18nManager.forceRTL(false);
+
+    if (language === "ar") {
+      i18n.changeLanguage("ar");
+      I18nManager.forceRTL(true);
+    } else {
+      i18n.changeLanguage("en");
+      I18nManager.forceRTL(false);
+    }
+  }, [language]);
+
+  useEffect(() => {
+    getLanguage();
+  }, []);
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
@@ -28,12 +65,3 @@ export default function App() {
     </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#AFEEEE",
-  },
-});

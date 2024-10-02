@@ -1,17 +1,26 @@
 import { Ionicons } from "@expo/vector-icons";
-import { TextInput, StyleSheet, View, Pressable } from "react-native";
+import { TextInput, StyleSheet, View, Pressable, Keyboard } from "react-native";
+import { useTranslation } from "react-i18next";
 
 const SearchBar = ({ searchText, setSearchText, onSearch }) => {
+  const handleSearch = () => {
+    onSearch();
+    Keyboard.dismiss();
+  };
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.textInput}
-        placeholder="Search"
+        placeholder={t("Search")}
         placeholderTextColor="grey"
         value={searchText}
         onChangeText={setSearchText}
+        returnKeyType="search"
+        onSubmitEditing={handleSearch}
       />
-      <Pressable onPress={onSearch} style={styles.icon}>
+      <Pressable onPress={handleSearch} style={styles.icon}>
         <Ionicons name="search" size={20} color="black" />
       </Pressable>
     </View>
@@ -28,10 +37,9 @@ const styles = StyleSheet.create({
     borderColor: "grey",
     borderRadius: 8,
     padding: 5,
-    marginTop: 14,
-    width: "80%",
-
+    marginVertical: 10,
     marginHorizontal: 30,
+    height: 45,
   },
   textInput: {
     flex: 1,

@@ -28,11 +28,19 @@ function reducer(state = initialFavoritesState, action) {
         ...state,
         isLoggedIn: true,
       };
+    case "SIGNUP":
+      return {
+        ...state,
+        isLoggedIn: true,
+      };
     case "LOGOUT":
       return {
         ...state,
         isLoggedIn: false,
+        favoriteGifs: [],
       };
+    case "RESET":
+      return initialFavoritesState;
     default:
       return state;
   }

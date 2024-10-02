@@ -2,7 +2,13 @@ import axios from "axios";
 
 const API_KEY = "1YG2MuuVW2js3z2DY5VVg1BPb8bSKrfC";
 
-export const fetchGifs = async (page, setLoading, setHasMore, setGifs) => {
+export const fetchGifs = async (
+  page,
+  setLoading,
+  setHasMore,
+  setGifs,
+  isRefreshing
+) => {
   setLoading(true);
   try {
     const API_URL = `https://api.giphy.com/v1/gifs/trending?api_key=${API_KEY}&limit=20&offset=${
@@ -21,7 +27,9 @@ export const fetchGifs = async (page, setLoading, setHasMore, setGifs) => {
         slug: item.slug,
         type: item.type,
       }));
-      setGifs((currGifs) => [...currGifs, ...formattedGifs]);
+      setGifs((currGifs) =>
+        isRefreshing ? formattedGifs : [...currGifs, ...formattedGifs]
+      );
     } else {
       setHasMore(false);
     }

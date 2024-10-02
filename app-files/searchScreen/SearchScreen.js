@@ -4,6 +4,7 @@ import {
   Text,
   FlatList,
   ActivityIndicator,
+  Animated,
 } from "react-native";
 import { useState } from "react";
 import { fetchGifs } from "./searchApi";
@@ -11,6 +12,7 @@ import SearchBar from "./SearchBar";
 import GifItem from "../homeScreen/GifItem";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 const SearchScreen = () => {
   const [page, setPage] = useState(0);
@@ -22,11 +24,19 @@ const SearchScreen = () => {
   const navigation = useNavigation();
   const favorites = useSelector((state) => state.favorites.favoriteGifs);
   const dispatch = useDispatch();
+  const scrollY = new Animated.Value(0);
+  const diffClamp = Animated.diffClamp(scrollY, 0, 70);
+  const translateY = diffClamp.interpolate({
+    inputRange: [0, 70],
+    outputRange: [0, -70],
+    extrapolate: "clamp",
+  });
+  const { t } = useTranslation();
 
   const handleSearch = () => {
     if (searchText !== "") {
-      setPage(0); // Reset page number to 0 for a new search
-      setGifs([]); // Clear the existing GIFs
+      setPage(0);
+      setGifs([]); // Clear previous search results
       setHasMore(true);
       setLoading(true);
       fetchGifs(searchText, setGifs, setNoResults, 0, setLoading, setHasMore);
@@ -80,15 +90,28 @@ const SearchScreen = () => {
 
   return (
     <View style={styles.root}>
-      <SearchBar
-        searchText={searchText}
-        setSearchText={setSearchText}
-        onSearch={handleSearch}
-      />
+      <Animated.View
+        style={{
+          transform: [{ translateY: translateY }],
+          zIndex: 100,
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: "white",
+        }}
+      >
+        <SearchBar
+          searchText={searchText}
+          setSearchText={setSearchText}
+          onSearch={handleSearch}
+        />
+      </Animated.View>
       {noResults ? (
-        <Text style={styles.noResults}>No results found</Text>
+        <Text style={styles.noResults}>{t("No results found")}</Text>
       ) : (
-        <FlatList
+        <Animated.FlatList
+          bounces={false}
           data={gifs}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
@@ -99,6 +122,7 @@ const SearchScreen = () => {
               )}
               toggleFavorite={toggleFavorite}
               pressHandler={pressHandler}
+              screenType="SearchScreen"
             />
           )}
           numColumns={2}
@@ -107,6 +131,18 @@ const SearchScreen = () => {
           onEndReached={handleOnEndReached}
           onEndReachedThreshold={0.5}
           ListFooterComponent={renderFooter}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: scrollY,
+                  },
+                },
+              },
+            ],
+            { useNativeDriver: true }
+          )}
         />
       )}
     </View>
@@ -121,13 +157,14 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   noResults: {
-    marginTop: 20,
+    marginTop: 70,
     textAlign: "center",
     fontSize: 18,
     color: "#333",
   },
   listContainer: {
     paddingHorizontal: 10,
+    paddingTop: 70,
   },
   columnWrapper: {
     justifyContent: "space-between",

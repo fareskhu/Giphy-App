@@ -20,5 +20,8 @@ const styles = StyleSheet.create({
     zIndex: 90,
     left: 5,
     marginTop: 10,
+    backgroundColor: "white",
+    borderRadius: 8,
+    // opacity: 0.75,
   },
 });
