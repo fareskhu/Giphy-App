@@ -1,57 +1,67 @@
-import { View, StyleSheet } from "react-native";
-import Validation from "../../app-files/Validation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Provider, useSelector, useDispatch } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import Authentication from "../../app-files/Authentication";
 import BottomNavigationBar from "../../app-files/BottomNavigationBar";
+import { store, persistor } from "../../app-files/store";
+import { firebase } from "../../app-files/firebaseConfig";
+import { I18nManager, StyleSheet, View } from "react-native"; // Import I18nManager for layout direction
+import i18n from "@/app-files/i18";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { createStore, combineReducers } from "redux";
-import { Provider } from "react-redux";
+I18nManager.allowRTL(true);
+I18nManager.forceRTL(false);
 
-const store = createStore(combineReducers({ favorites }));
+const AppContent = () => {
+  const isLoggedIn = useSelector((state) => state.favorites.isLoggedIn);
+  const dispatch = useDispatch();
 
-function favorites(state = { favoriteGifs: [] }, action) {
-  switch (action.type) {
-    case "ADD_TO_FAVORITE":
-      return {
-        ...state,
-        favoriteGifs: [...state.favoriteGifs, action.payload],
-      };
-    case "REMOVE_FROM_FAVORITE":
-      return {
-        ...state,
-        favoriteGifs: state.favoriteGifs.filter(
-          (item) => item.id !== action.payload
-        ),
-      };
-    case "REMOVE_ALL_FROM_FAVORITE":
-      return {
-        ...state,
-        favoriteGifs: [],
-      };
-    default:
-      return state;
+  useEffect(() => {
+    // Handle the authentication state
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        dispatch({ type: "LOGIN" });
+      }
+    });
+
+    return unsubscribe;
+  }, [dispatch]);
+
+  if (isLoggedIn) {
+    return <BottomNavigationBar />;
+  } else {
+    return <Authentication />;
   }
-}
+};
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [language, setLanguage] = useState();
+  const getLanguage = async () => {
+    let language = await AsyncStorage.getItem("lang");
+    setLanguage(language);
+  };
+
+  useEffect(() => {
+    // I18nManager.forceRTL(false);
+
+    if (language === "ar") {
+      i18n.changeLanguage("ar");
+      I18nManager.forceRTL(true);
+    } else {
+      i18n.changeLanguage("en");
+      I18nManager.forceRTL(false);
+    }
+  }, [language]);
+
+  useEffect(() => {
+    getLanguage();
+  }, []);
+
   return (
     <Provider store={store}>
-      {isLoggedIn ? (
-        <BottomNavigationBar />
-      ) : (
-        <View style={styles.root}>
-          <Validation setIsLoggedIn={setIsLoggedIn} />
-        </View>
-      )}
+      <PersistGate loading={null} persistor={persistor}>
+        <AppContent />
+      </PersistGate>
     </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#AFEEEE",
-  },
-});

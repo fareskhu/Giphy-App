@@ -1,28 +1,44 @@
-import { useEffect, useState } from "react";
-import { StyleSheet, View, FlatList, ActivityIndicator } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
+import GifItem from "./GifItem";
+import { fetchGifs } from "./api";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { fetchGifs } from "./api";
-import GifItem from "./GifItem";
+import Animated from "react-native-reanimated";
 
 const HomeScreen = () => {
   const [gifs, setGifs] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-
-  useEffect(() => {
-    fetchGifs(page, setLoading, setHasMore, setGifs);
-  }, [page]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const favorites = useSelector((state) => state.favorites.favoriteGifs);
 
+  useEffect(() => {
+    fetchGifs(page, setLoading, setHasMore, setGifs);
+  }, [page]);
+
   const handleOnEndReached = () => {
     if (!loading && hasMore) {
-      setPage(page + 1);
+      setPage((currentPage) => currentPage + 1);
     }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setPage(0);
+    setHasMore(true);
+    await fetchGifs(0, setLoading, setHasMore, setGifs, setRefreshing);
+    setRefreshing(false);
   };
 
   const renderFooter = () => {
@@ -57,8 +73,14 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        numColumns={2}
         data={gifs}
+        contentContainerStyle={{
+          gap: 10,
+          padding: 10,
+        }}
+        columnWrapperStyle={{
+          gap: 10,
+        }}
         renderItem={({ item }) => (
           <GifItem
             item={item}
@@ -67,12 +89,17 @@ const HomeScreen = () => {
             )}
             toggleFavorite={toggleFavorite}
             pressHandler={pressHandler}
+            screenType="HomeScreen" // Pass the screen type here
           />
         )}
         keyExtractor={(item) => item.id}
+        numColumns={2}
         onEndReached={handleOnEndReached}
         onEndReachedThreshold={0.5}
         ListFooterComponent={renderFooter}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </View>
   );

@@ -10,8 +10,9 @@ import {
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import RemoveAllFromFavorite from "./RemoveAllFavorite";
+import RemoveAllFavorite from "./RemoveAllFavorite";
 import IconButton from "./IconButton";
+import { useTranslation } from "react-i18next";
 
 const screenWidth = Dimensions.get("window").width;
 const itemMargin = 10;
@@ -22,6 +23,7 @@ function FavoriteScreen() {
   const favorites = useSelector((state) => state.favorites.favoriteGifs);
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const { t } = useTranslation();
 
   const pressHandler = (item) => {
     navigation.navigate("Details", {
@@ -38,15 +40,15 @@ function FavoriteScreen() {
   return (
     <View style={styles.root}>
       {favorites.length === 0 ? (
-        <Text style={styles.emptyMessage}>No favorites yet.</Text>
+        <Text style={styles.emptyMessage}>{t("No favorites yet.")}</Text>
       ) : (
         <>
-          <RemoveAllFromFavorite />
           <FlatList
+            contentContainerStyle={{ paddingBottom: 10 }}
             data={favorites}
             keyExtractor={(item) => item.id}
             numColumns={numColumns}
-            columnWrapperStyle={styles.columnWrapper} // This ensures even spacing between items
+            columnWrapperStyle={styles.columnWrapper}
             renderItem={({ item }) => (
               <Pressable
                 style={styles.itemContainer}
@@ -64,6 +66,7 @@ function FavoriteScreen() {
                     <IconButton isPressed={true} />
                   </Pressable>
                 </View>
+
                 <Image source={{ uri: item.image }} style={styles.image} />
                 <Text style={styles.title}>{item.title}</Text>
                 <Text numberOfLines={2} style={styles.description}>
@@ -74,6 +77,8 @@ function FavoriteScreen() {
               </Pressable>
             )}
           />
+
+          <RemoveAllFavorite />
         </>
       )}
     </View>
@@ -86,7 +91,7 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: "white",
-    padding: itemMargin,
+    paddingHorizontal: 10,
   },
   emptyMessage: {
     fontSize: 18,
@@ -106,13 +111,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2,
+    top: 10,
   },
   image: {
     width: "100%",
     height: 250,
-    borderRadius: 10,
     marginBottom: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
   title: {
     fontSize: 18,
@@ -126,10 +132,10 @@ const styles = StyleSheet.create({
     color: "#666",
     paddingHorizontal: 10,
     textAlign: "center",
+    paddingBottom: 12,
   },
   iconContainer: {
     position: "absolute",
-    top: 8,
     left: 8,
     zIndex: 10,
   },
